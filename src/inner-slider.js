@@ -20,7 +20,8 @@ import {
   getPreClones,
   getPostClones,
   getTrackLeft,
-  getTrackCSS
+  getTrackCSS,
+  getWidth
 } from "./utils/innerSliderUtils";
 
 import { Track } from "./track";
@@ -33,6 +34,7 @@ export class InnerSlider extends React.Component {
     super(props);
     this.list = null;
     this.track = null;
+    this.unslick = true;
     this.state = {
       ...initialState,
       currentSlide: this.props.initialSlide,
@@ -169,6 +171,24 @@ export class InnerSlider extends React.Component {
   };
   componentDidUpdate = () => {
     this.checkImagesLoad();
+    if (
+      this.props.variableWidth === true &&
+      this.track &&
+      this.props.noRightPadding === true
+    ) {
+      let trackElem = ReactDOM.findDOMNode(this.track);
+      let listWidth = Math.ceil(getWidth(ReactDOM.findDOMNode(this.list)));
+      let widthOfAllChildren = 0;
+
+      for (let slide = 0; slide < trackElem.childNodes.length; slide++) {
+        widthOfAllChildren += trackElem.children[slide].offsetWidth;
+      }
+      if (widthOfAllChildren < listWidth) {
+        this.unslick = true;
+      } else {
+        this.unslick = false;
+      }
+    }
     this.props.onReInit && this.props.onReInit();
     if (this.props.lazyLoad) {
       let slidesToLoad = getOnDemandLazySlides({
@@ -592,7 +612,7 @@ export class InnerSlider extends React.Component {
       "slick-vertical": this.props.vertical,
       "slick-initialized": true
     });
-    let spec = { ...this.props, ...this.state };
+    let spec = { ...this.props, ...this.state, trackRef: this.track };
     let trackProps = extractObject(spec, [
       "fade",
       "cssEase",
@@ -614,6 +634,7 @@ export class InnerSlider extends React.Component {
       "trackStyle",
       "variableWidth",
       "unslick",
+      "noRightPadding",
       "centerPadding"
     ]);
     const { pauseOnHover } = this.props;
@@ -654,15 +675,7 @@ export class InnerSlider extends React.Component {
     }
 
     var prevArrow, nextArrow;
-    let arrowProps = extractObject(spec, [
-      "infinite",
-      "centerMode",
-      "currentSlide",
-      "slideCount",
-      "slidesToShow",
-      "prevArrow",
-      "nextArrow"
-    ]);
+    let arrowProps = spec;
     arrowProps.clickHandler = this.changeSlide;
 
     if (this.props.arrows) {
@@ -715,21 +728,28 @@ export class InnerSlider extends React.Component {
       className: className,
       dir: "ltr"
     };
+    let unslick = false;
 
-    if (this.props.unslick) {
+    if (this.props.noRightPadding) {
+      unslick = this.unslick;
+    } else {
+      unslick = this.props.unslick;
+    }
+
+    if (unslick) {
       listProps = { className: "slick-list" };
       innerSliderProps = { className };
     }
     return (
       <div {...innerSliderProps}>
-        {!this.props.unslick ? prevArrow : ""}
+        {!unslick ? prevArrow : ""}
         <div ref={this.listRefHandler} {...listProps}>
           <Track ref={this.trackRefHandler} {...trackProps}>
             {this.props.children}
           </Track>
         </div>
-        {!this.props.unslick ? nextArrow : ""}
-        {!this.props.unslick ? dots : ""}
+        {!unslick ? nextArrow : ""}
+        {!unslick ? dots : ""}
       </div>
     );
   };

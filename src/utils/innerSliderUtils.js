@@ -85,6 +85,34 @@ export const canGoNext = spec => {
       canGo = false;
     }
   }
+  if (
+    spec.variableWidth === true &&
+    spec.trackRef &&
+    spec.noRightPadding === true
+  ) {
+    let trackElem = ReactDOM.findDOMNode(spec.trackRef);
+    let targetSlideIndex = spec.currentSlide + getPreClones(spec);
+    let targetSlide = trackElem && trackElem.childNodes[targetSlideIndex];
+    let targetLeft = targetSlide ? targetSlide.offsetLeft * -1 : 0;
+    let widthUntilListRightEnd = 0;
+
+    for (
+      let slide = targetSlideIndex;
+      slide < trackElem.childNodes.length;
+      slide++
+    ) {
+      widthUntilListRightEnd +=
+        trackElem &&
+        trackElem.children[slide] &&
+        trackElem.children[slide].offsetWidth;
+    }
+    if (widthUntilListRightEnd < spec.listWidth) {
+      targetLeft += spec.listWidth - widthUntilListRightEnd;
+      if (targetLeft < 0) {
+        canGo = false;
+      }
+    }
+  }
   return canGo;
 };
 

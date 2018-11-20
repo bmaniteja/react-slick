@@ -1,7 +1,6 @@
 'use strict';
 
 import React from 'react';
-import Slider from '../src/slider';
 
 import SimpleSlider from '../examples/SimpleSlider'
 import SlideChangeHooks from '../examples/SlideChangeHooks'
@@ -32,6 +31,7 @@ import CustomPaging from '../examples/CustomPaging'
 import CustomSlides from '../examples/CustomSlides'
 import AsNavFor from '../examples/AsNavFor'
 import AppendDots from '../examples/AppendDots'
+import NoRightPadding from '../examples/NoRightPadding'
 
 export default class App extends React.Component {
   render() {
@@ -66,6 +66,7 @@ export default class App extends React.Component {
         <VerticalSwipeToSlide />
         <AsNavFor />
         <AppendDots />
+        <NoRightPadding/>
       </div>
     );
   }
