@@ -495,8 +495,11 @@ export class InnerSlider extends React.Component {
     let triggerSlideHandler = state["triggerSlideHandler"];
     delete state["triggerSlideHandler"];
     this.setState(state);
-    if (triggerSlideHandler === undefined) return;
-    this.slideHandler(triggerSlideHandler);
+    this.slideHandler(
+      triggerSlideHandler === undefined
+        ? this.state.slideCount
+        : triggerSlideHandler
+    );
     if (this.props.verticalSwiping) {
       this.enableBodyScroll();
     }
