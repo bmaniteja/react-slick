@@ -98,6 +98,13 @@ npm start
 open http://localhost:8080
 ```
 
+### Generating Bundles Locally
+
+```bash
+npm run prepublish
+npm run build
+```
+
 <a href="https://opencollective.com/react-slick/donate" target="_blank">
   <img src="https://opencollective.com/react-slick/donate/button@2x.png?color=blue" width=300 />
 </a>
